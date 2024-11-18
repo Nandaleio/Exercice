@@ -1,0 +1,44 @@
+
+
+<div>
+    <button (click)="createGameDialog.open = true">Create Game</button>
+</div>
+<div class="horizontal">
+    <app-game-list></app-game-list>
+</div>
+
+
+<dialog #createGameDialog>
+    <article>
+        <header>
+          <button aria-label="Close" rel="prev" (click)="createGameDialog.close()"></button>
+          <p>
+            <strong>Create a new Game</strong>
+          </p>
+        </header>
+        <input type="text" name="Name" placeholder="Name" (input)="gameName = $any($event.target).value">
+        <div class="horizontal">
+            @if(!rules || rules.length === 0) {
+                No game rules available
+            }
+            @for (r of rules; track $index) {
+                <article [className]="'rule ' + (r.id === selectedRule?.id && 'selected') " (click)="selectedRule = r">
+                    <header>
+                          <strong>{{r.name}}</strong>
+                    </header>
+                    <ul>
+                        <li>Pins: {{r.maxPins}}</li>
+                        <li>Frames: {{r.maxFrames}}</li>
+                        <li>Rolls per Frame: {{r.maxRollsPerFrame}}</li>
+                    </ul>
+                </article>
+            }
+        </div>
+
+        <footer>
+            <button class="secondary" (click)="createGameDialog.close()"> Cancel </button>
+            <button (click)="createGame()">Confirm</button>
+          </footer>
+      </article>
+</dialog>
+

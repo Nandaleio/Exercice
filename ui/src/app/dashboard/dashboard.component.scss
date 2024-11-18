@@ -1,0 +1,21 @@
+:host {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: space-around;
+
+    .horizontal {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+    }
+
+    .rule:hover,.rule.selected  {
+        cursor: pointer;
+        box-shadow: 0px 0px 24px -6px var(--pico-primary-background);
+    }
+}

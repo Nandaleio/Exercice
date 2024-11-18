@@ -50,6 +50,10 @@ public class GameService {
         return this.ruleRepo.findAll();
     }
 
+    public Iterable<Game> getGames() {
+        return this.gameRepo.findAll();
+    }
+
 
     public Game addPlayer(Long gameId, String playerName) {
         Game game = this.gameRepo.findById(gameId).orElseThrow();
