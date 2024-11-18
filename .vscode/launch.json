@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-ExerciceApplication<exercice>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.telemis.exercice.ExerciceApplication",
+            "projectName": "exercice",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
