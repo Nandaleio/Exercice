@@ -16,7 +16,7 @@
             <strong>Create a new Game</strong>
           </p>
         </header>
-        <input type="text" name="Name" placeholder="Name" (input)="gameName = $any($event.target).value">
+        <input type="text" name="Name" placeholder="Name" [value]="gameName" (input)="gameName = $any($event.target).value">
         <div class="horizontal">
             @if(!rules || rules.length === 0) {
                 No game rules available

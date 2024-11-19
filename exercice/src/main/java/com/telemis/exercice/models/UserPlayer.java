@@ -5,25 +5,18 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-public class Rule {
+@NoArgsConstructor
+public class UserPlayer {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String name;
+    private String username;
 
-    private int maxPins;
-
-    private int maxFrames;
-
-    private int maxRollsPerFrame;
-
-    private int strikeBonus;
-    private int strikeAfterPins;
-
-    private int spareBonus;
-    private int spareAfterPins;
+    private String password;
 }

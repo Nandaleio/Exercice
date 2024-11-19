@@ -19,7 +19,7 @@ public class Scoreboard {
 
     @OneToOne
     @JoinColumn(name = "player_id", nullable = false)
-    private Player player;
+    private UserPlayer player;
 
     @ManyToOne
     @JoinColumn(name = "game_id", nullable = false)

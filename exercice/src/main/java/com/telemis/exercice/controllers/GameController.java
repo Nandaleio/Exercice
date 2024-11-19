@@ -14,9 +14,10 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "http://localhost:4200/"}) //For testing
 @RestController
 public class GameController {
 
@@ -36,12 +37,19 @@ public class GameController {
         return this.gameService.getGames();
     }
     
-    @PostMapping("/join")
-    public Game joinNewGame(@RequestBody ObjectNode json) {
-        return this.gameService.addPlayer(
-            json.get("gameId").asLong(), 
-            json.get("name").asText()
-        );
+    @GetMapping("/game")
+    public Game getGame(@RequestParam Long gameId) {
+        return this.gameService.getGame(gameId);
+    }
+    
+    @GetMapping("/delete")
+    public void deleteGame(@RequestParam Long gameId) {
+        this.gameService.deleteGame(gameId);
+    }
+    
+    @GetMapping("/join")
+    public Game joinNewGame(@RequestParam Long gameId) {
+        return this.gameService.addPlayer(gameId);
     }
 
     @PostMapping("/new")
@@ -52,13 +60,12 @@ public class GameController {
         );
     }
 
-    @PostMapping("/throw")
+    @PostMapping("/roll")
     public Scoreboard postMethodName(@RequestBody ObjectNode json) { //@RequestBody int pins, @RequestBody Long gameId) {
         
-        this.frameService.createNextFrame(null, null, 0);
         return null;
     }
-    
+
 
     
 }

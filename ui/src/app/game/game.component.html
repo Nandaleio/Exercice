@@ -1,0 +1,26 @@
+<article>
+    <header class="delete-header">
+        <p>
+            <strong>{{game?.name}}</strong>
+        </p>
+    </header>
+
+    @for (player of game?.players; track $index) {
+        {{player.name}}:
+        <div class="scoreboard">
+        @for (frame of [].constructor(game?.rule?.maxFrames); track $index) {
+            <div class="frame">
+                <span>{{$index+1}}</span>
+                <div class="rolls">
+                    @for (frame of [].constructor(game?.rule?.maxRollsPerFrame); track $index) {
+                        <div class="roll">
+                            {{$index+1}}
+                        </div>
+                    }
+                </div>
+                <span>Frame Score</span>
+            </div>
+        }
+        </div>
+    }
+</article>

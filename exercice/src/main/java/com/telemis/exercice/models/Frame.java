@@ -26,9 +26,17 @@ public class Frame {
 
     @ManyToOne
     @JoinColumn(name = "player_id", nullable = false)
-    private Player player;
+    private UserPlayer player;
 
     @ManyToOne
     @JoinColumn(name = "game_id", nullable = false)
     private Game game;
+
+    public boolean isComplete(Rule rule) {
+            if (this.getFrameNumber() < rule.getMaxFrames()) {
+                return this.getRolls().size() == rule.getMaxRollsPerFrame();
+            } else {
+                return this.getRolls().size() == (rule.getMaxRollsPerFrame() + Math.max(rule.getSpareAfterPins(), rule.getStrikeAfterPins()));
+            }
+    }
 }

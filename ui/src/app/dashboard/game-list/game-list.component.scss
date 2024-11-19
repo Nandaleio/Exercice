@@ -1,0 +1,20 @@
+:host {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    flex-wrap: wrap;
+
+    .delete-header {
+        display: flex;
+        justify-content: space-between;
+
+        span.material-symbols-outlined {
+            cursor: pointer;
+        }
+    }
+
+    .center-footer {
+        display: flex;
+        justify-content: center;
+    }
+}

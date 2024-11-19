@@ -1,7 +1,7 @@
-import { Component, OnInit, viewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, viewChild } from '@angular/core';
 import { GameService } from '../services/game-service.service';
 import { Rule } from '../models/rule-model';
-import { GameListComponent } from "../game-list/game-list.component";
+import { GameListComponent } from "./game-list/game-list.component";
 
 @Component({
   selector: 'app-dashboard',
@@ -14,9 +14,9 @@ export class DashboardComponent implements OnInit{
 
   rules: Rule[] = []
   selectedRule?:Rule;
-  gameName?:string;
+  gameName:string = "";
 
-  createGameDialog = viewChild<HTMLDialogElement>("createGameDialog");
+  createGameDialog = viewChild.required<ElementRef>("createGameDialog");
 
   constructor(private gameService: GameService) {}
 
@@ -30,7 +30,9 @@ export class DashboardComponent implements OnInit{
     if(!this.selectedRule || !this.gameName) return;
 
     this.gameService.createGame(this.selectedRule.id, this.gameName).subscribe(res => {
-      this.createGameDialog()?.close();
+      this.selectedRule = undefined;
+      this.gameName = "";
+      this.createGameDialog().nativeElement.open = false;
     })
   }
 

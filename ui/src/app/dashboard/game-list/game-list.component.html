@@ -1,18 +1,20 @@
 
-
+@if (!games || games.length === 0) {
+    No game in progress (create one !)
+}
 @for (g of games; track $index) {
     <article>
-        <header>
-            <button aria-label="Close" rel="prev" ></button>
+        <header class="delete-header">
             <p>
                 <strong>{{g.name}}</strong>
             </p>
+            <span class="material-symbols-outlined" (click)="deleteGame(g)">delete</span>
         </header>
         <ul>
-            <li>Players: {{g.players.length || 0}}</li>
+            <li>Players: {{g.players?.length || 0}}</li>
             <li>Rule: {{g.rule.name}}</li>
         </ul>
-        <footer>
+        <footer class="center-footer">
             <button (click)="currentGame = g; joinGameDialog.open = true">Join</button>
         </footer>
     </article>

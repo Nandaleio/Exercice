@@ -1,0 +1,20 @@
+.scoreboard {
+    display: flex;
+    flex-direction: row;
+}
+
+.frame {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.rolls {
+    display: flex;
+    align-items: flex-end;
+    flex-direction: row;
+}
+
+.roll{
+    flex-grow: 1;
+}
