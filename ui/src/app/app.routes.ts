@@ -5,7 +5,9 @@ import { AuthComponent } from './auth/auth.component';
 
 export const routes: Routes = [
     {path: 'login', component: AuthComponent},
-    {path: 'dashboard', component: DashboardComponent},
-    {path: 'game/:gameId', component: GameComponent},
+    {children: [
+        {path: 'dashboard', canActivate:undefined, component: DashboardComponent},
+        {path: 'game/:gameId', component: GameComponent},
+    ]},
     { path: '**', redirectTo:'dashboard' }
 ];
