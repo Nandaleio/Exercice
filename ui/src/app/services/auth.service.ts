@@ -10,10 +10,13 @@ export class AuthService {
 
   private LOCAL_KEY = "telemis_token"
   private token: string | null;
+  private payload: any;
 
-  // Using localstorage to prevent logout on page reload (not super secure)
   constructor(private http: HttpClient) {
     this.token = localStorage.getItem(this.LOCAL_KEY)
+    if(this.token) {
+      this.payload = this.parseJwt();
+    }
   }
 
   login(username: string, password: string) {
@@ -28,6 +31,15 @@ export class AuthService {
     );
   }
 
+  private parseJwt() {
+    var base64Url = this.token!.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    return JSON.parse(jsonPayload);
+  }
+
   logout() {
     localStorage.removeItem(this.LOCAL_KEY);
     this.token = null;
@@ -40,10 +52,17 @@ export class AuthService {
   private setToken(token:string){
     localStorage.setItem(this.LOCAL_KEY, token);
     this.token = token;
+    if(this.token) {
+      this.payload = this.parseJwt();
+    }
   }
 
   getToken() {
     return this.token;
+  }
+
+  getPayload() {
+    return this.payload;
   }
 
 }

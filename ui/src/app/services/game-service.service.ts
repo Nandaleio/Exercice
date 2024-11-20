@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Rule } from '../models/rule-model';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Game } from '../models/game-model';
+import { Frame, Game } from '../models/game-model';
 import { Subject, tap } from 'rxjs';
 
 @Injectable({
@@ -10,7 +10,7 @@ import { Subject, tap } from 'rxjs';
 })
 export class GameService {
 
-  //private socket?: WebSocket;
+  private socket?: WebSocket;
 
   subject = new Subject<{type: "create" | "delete" | "update", game: Game | number}>();
 
@@ -44,16 +44,26 @@ export class GameService {
     return this.http.get<Game>(`${environment.apiURL}/join?gameId=${gameId}`);
   }
 
-  // connect() {
-  //   this.socket = new WebSocket(environment.WsUrl+"/games");
-  // }
+  roll(gameId: number) {
+    return this.http.get<Frame[]>(`${environment.apiURL}/roll?gameId=${gameId}`);
+  }
 
-  // listenToChange(callback: (this: WebSocket, ev: Event | CloseEvent | MessageEvent<any>) => any) {
-  //   this.socket?.addEventListener("message", callback);
-  // }
+  // WS :
 
-  // disconnect() {
-  //   this.socket?.close();
-  // }
+  connect() {
+    this.socket = new WebSocket(environment.WsUrl);
+  }
+
+  sendMessage(msg: string) {
+    this.socket?.send(msg);
+  }
+
+  listenToChange(callback: (this: WebSocket, ev: Event | CloseEvent | MessageEvent<any>) => any) {
+    this.socket?.addEventListener("message", callback);
+  }
+
+  disconnect() {
+    this.socket?.close();
+  }
 
 }

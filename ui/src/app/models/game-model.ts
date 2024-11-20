@@ -1,11 +1,22 @@
 import { Rule } from "./rule-model";
-import { Scoreboard } from "./scoreboard-model";
 
 export interface Game {
     id: number,
     name: string,
     rule: Rule,
-    players?: {id:number, username:string}[],
-    frames: Scoreboard;
-
+    players?: Player[],
+    frames: Frame[];
 }
+
+export interface Frame {
+    id: number;
+    frameNumber: number;
+    rolls: number[];
+    totalScore: number;
+    player: Player;
+}
+
+export interface Player {
+    id:number; 
+    username:string
+};

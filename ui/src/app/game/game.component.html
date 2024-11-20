@@ -1,26 +1,31 @@
 <article>
     <header class="delete-header">
-        <p>
+        <h1>
             <strong>{{game?.name}}</strong>
-        </p>
+        </h1>
     </header>
 
-    @for (player of game?.players; track $index) {
-        {{player.username}}:
-        <div class="scoreboard">
-        @for (frame of [].constructor(game?.rule?.maxFrames); track $index) {
-            <div class="frame">
-                <span class="frame-number">{{$index+1}}</span>
-                <div class="rolls">
-                    @for (frame of [].constructor(game?.rule?.maxRollsPerFrame); track $index) {
-                        <div class="roll">
-                            roll score
-                        </div>
-                    }
+    <div class="scoreboards">
+    
+        <button (click)="roll()">Roll !</button>
+
+        @for (player of game?.players; track $index) {
+            {{player.username}}:
+            <div class="board">
+            @for (frame of getPlayerGame(player); track $index) {
+                <div class="frame">
+                    <span class="frame-number">{{frame.frameNumber}}</span>
+                    <div class="rolls">
+                        @for (roll of frame.rolls; track $index) {
+                            <div class="roll">
+                                {{roll}}
+                            </div>
+                        }
+                    </div>
+                    <span>{{frame.totalScore}}</span>
                 </div>
-                <span>frame score</span>
+            }
             </div>
         }
-        </div>
-    }
+    </div>
 </article>

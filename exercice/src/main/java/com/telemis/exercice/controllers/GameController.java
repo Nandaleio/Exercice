@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.telemis.exercice.models.Game;
 import com.telemis.exercice.models.Rule;
-import com.telemis.exercice.models.Scoreboard;
 import com.telemis.exercice.services.FrameService;
 import com.telemis.exercice.services.GameService;
 
@@ -60,9 +59,10 @@ public class GameController {
         );
     }
 
-    @PostMapping("/roll")
-    public Scoreboard postMethodName(@RequestBody ObjectNode json) { //@RequestBody int pins, @RequestBody Long gameId) {
-        
+    @GetMapping("/roll")
+    public Game postMethodName(@RequestParam Long gameId) {
+        //TODO change the 1 to be either a random number or a more elaborate 1
+        this.gameService.lancer(gameId, 1);
         return null;
     }
 

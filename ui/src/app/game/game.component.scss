@@ -1,4 +1,9 @@
-.scoreboard {
+
+.scoreboards{
+    display: flex;
+    flex-direction: column;
+}
+.board {
     display: flex;
     flex-direction: row;
 }
@@ -10,6 +15,7 @@
 
     * {
         border: 1px solid var(--pico-primary-background);
+        text-align: center;
     }
 
     .frame-number{

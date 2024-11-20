@@ -39,4 +39,8 @@ public class Frame {
                 return this.getRolls().size() == (rule.getMaxRollsPerFrame() + Math.max(rule.getSpareAfterPins(), rule.getStrikeAfterPins()));
             }
     }
+
+    public int getPinsDown() {
+        return this.getRolls().stream().mapToInt(r -> r.intValue()).sum();
+    }
 }

@@ -13,6 +13,7 @@ import com.telemis.exercice.repositories.UserRepository;
 
 @Service
 public class AuthService {
+    
 	@Autowired
     private UserRepository userRepository;
 	@Autowired
