@@ -34,7 +34,7 @@ public class AuthController {
         UserDetails userDetails = userService.loadUserByUsername(request.getUsername());
         String token = jwtUtil.generateToken(userDetails.getUsername());
 
-        return ResponseEntity.ok(token);
+        return ResponseEntity.ok("\""+token+"\"");
     }
 
     @PostMapping("/login")
@@ -44,6 +44,6 @@ public class AuthController {
         UserDetails userDetails = userService.loadUserByUsername(request.getUsername());
         String token = jwtUtil.generateToken(userDetails.getUsername());
 
-        return ResponseEntity.ok(token);
+        return ResponseEntity.ok("\""+token+"\"");
     }
 }

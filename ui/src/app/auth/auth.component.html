@@ -1,0 +1,38 @@
+<form #authForm="ngForm" class="signin-container">
+    <h1>
+        Telemis Exercice
+        <br/>
+        
+        @if(isRegister){
+            Register
+        }@else {
+            Sign In
+        }
+    </h1>
+    <input id="username" name="username"  [(ngModel)]="form.username" 
+    placeholder="Username" required [attr.aria-invalid]="(isSubmit && !form.username) ? true : null"
+    aria-describedby="username-helper">
+    <small id="username-helper">{{(isSubmit && !form.username) ? "Username is required" : ''}}</small>
+    
+    <input id="password" name="password" [(ngModel)]="form.password" 
+    placeholder="Password" type="password" required [attr.aria-invalid]="(isSubmit && !form.password) ? true : null"
+    aria-describedby="password-helper">
+    <small id="password-helper">{{(isSubmit && !form.password) ? "Password is required" : ''}}</small>
+    
+    @if(isRegister){
+        <input 
+        id="confirm" name="confirm" [(ngModel)]="$any(form).confirm" 
+        placeholder="Confirm" [attr.aria-invalid]="(isSubmit && form.password !== $any(form).confirm) ? true : null" 
+        aria-describedby="confirm-helper" type="password" required >
+        <small id="confirm-helper">{{error}}</small>
+    }
+    <div class="actions">
+        @if(isRegister){
+            <a routerLink="/login" routerLinkActive="active" data-tooltip="Already have an account ?">Sign In</a>
+            <button (click)="$any(this).register()">Register</button>
+        }@else {
+            <a routerLink="/register" routerLinkActive="active" data-tooltip="Need to create an account ?">Register</a>
+            <button (click)="$any(this).signIn()">Sign In</button>
+        }
+    </div>
+</form>

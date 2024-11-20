@@ -6,19 +6,19 @@
     </header>
 
     @for (player of game?.players; track $index) {
-        {{player.name}}:
+        {{player.username}}:
         <div class="scoreboard">
         @for (frame of [].constructor(game?.rule?.maxFrames); track $index) {
             <div class="frame">
-                <span>{{$index+1}}</span>
+                <span class="frame-number">{{$index+1}}</span>
                 <div class="rolls">
                     @for (frame of [].constructor(game?.rule?.maxRollsPerFrame); track $index) {
                         <div class="roll">
-                            {{$index+1}}
+                            roll score
                         </div>
                     }
                 </div>
-                <span>Frame Score</span>
+                <span>frame score</span>
             </div>
         }
         </div>

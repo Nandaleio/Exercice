@@ -10,12 +10,11 @@ import { Subject, tap } from 'rxjs';
 })
 export class GameService {
 
-  private socket?: WebSocket;
+  //private socket?: WebSocket;
 
   subject = new Subject<{type: "create" | "delete" | "update", game: Game | number}>();
 
   constructor(private http: HttpClient) {}
-
   
   getRules() {
     return this.http.get<Rule[]>(environment.apiURL+'/rules');
@@ -45,16 +44,16 @@ export class GameService {
     return this.http.get<Game>(`${environment.apiURL}/join?gameId=${gameId}`);
   }
 
-  connect() {
-    this.socket = new WebSocket(environment.WsUrl+"/games");
-  }
+  // connect() {
+  //   this.socket = new WebSocket(environment.WsUrl+"/games");
+  // }
 
-  listenToChange(callback: (this: WebSocket, ev: Event | CloseEvent | MessageEvent<any>) => any) {
-    this.socket?.addEventListener("message", callback);
-  }
+  // listenToChange(callback: (this: WebSocket, ev: Event | CloseEvent | MessageEvent<any>) => any) {
+  //   this.socket?.addEventListener("message", callback);
+  // }
 
-  disconnect() {
-    this.socket?.close();
-  }
+  // disconnect() {
+  //   this.socket?.close();
+  // }
 
 }

@@ -21,7 +21,7 @@ public class AuthService {
     private AuthenticationManager authenticationManager;
 
     public UserPlayer register(LoginRequest request) {
-        // Check if username or email already exists
+        // Check if username exists
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new RuntimeException("Username already exists");
         }

@@ -5,6 +5,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.telemis.exercice.models.Frame;
@@ -14,6 +16,7 @@ import com.telemis.exercice.models.UserPlayer;
 import com.telemis.exercice.repositories.FrameRepository;
 import com.telemis.exercice.repositories.GameRepository;
 import com.telemis.exercice.repositories.RuleRepository;
+import com.telemis.exercice.repositories.UserRepository;
 
 import jakarta.transaction.Transactional;
 
@@ -29,6 +32,9 @@ public class GameService {
 
     @Autowired
     FrameRepository frameRepo;
+    
+	@Autowired
+    private UserRepository userRepository;
 
     public Game newGame(Long gameRuleId, String gameName) {
         Rule rule = this.ruleRepo.findById(gameRuleId).orElseThrow();
@@ -184,13 +190,18 @@ public class GameService {
     }
 
     public Game addPlayer(Long gameId) {
-        //TODO get user through auth
-        UserPlayer player = new UserPlayer();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserPlayer currentUser = this.userRepository.findByUsername(auth.getName()).orElseThrow();
 
         Game game = this.gameRepo.findById(gameId).orElseThrow();
         List<UserPlayer> players = game.getPlayers();
         if(players == null) players = new ArrayList<UserPlayer>();
-        players.add(player);
+
+        if(players.contains(currentUser)) { // user already in game
+            return game;
+        }
+
+        players.add(currentUser);
         game.setPlayers(new ArrayList<UserPlayer>(players));
         return this.gameRepo.save(game);
     }

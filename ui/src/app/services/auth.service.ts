@@ -8,28 +8,42 @@ import { tap } from 'rxjs';
 })
 export class AuthService {
 
-  private token?: string;
+  private LOCAL_KEY = "telemis_token"
+  private token: string | null;
 
-  constructor(private http: HttpClient) {}
+  // Using localstorage to prevent logout on page reload (not super secure)
+  constructor(private http: HttpClient) {
+    this.token = localStorage.getItem(this.LOCAL_KEY)
+  }
 
   login(username: string, password: string) {
-    return this.http.post<string>(`${environment.apiURL}/api/auth/login`, {username, password}).pipe(
-      tap(token => this.token = token)
+    return this.http.post<string>(`${environment.apiURL}/auth/login`, {username, password}).pipe(
+      tap(token => this.setToken(token))
     );
   }
 
   register(username: string, password: string) {
-    return this.http.post<string>(`${environment.apiURL}/api/auth/register`, {username, password}).pipe(
-      tap(token => this.token = token)
+    return this.http.post<string>(`${environment.apiURL}/auth/register`, {username, password}).pipe(
+      tap(token => this.setToken(token))
     );
   }
 
   logout() {
-    this.token = undefined;
+    localStorage.removeItem(this.LOCAL_KEY);
+    this.token = null;
   }
 
   checkLoggedIn(): boolean {
     return !!this.token;
+  }
+
+  private setToken(token:string){
+    localStorage.setItem(this.LOCAL_KEY, token);
+    this.token = token;
+  }
+
+  getToken() {
+    return this.token;
   }
 
 }

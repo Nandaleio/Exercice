@@ -1,13 +1,19 @@
 import { Routes } from '@angular/router';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { GameComponent } from './game/game.component';
-import { AuthComponent } from './auth/auth.component';
+import { SignInComponent } from './auth/signin.component';
+import { authGuard } from './auth/auth.guard';
+import { RegisterComponent } from './auth/register.component';
 
 export const routes: Routes = [
-    {path: 'login', component: AuthComponent},
-    {children: [
-        {path: 'dashboard', canActivate:undefined, component: DashboardComponent},
-        {path: 'game/:gameId', component: GameComponent},
-    ]},
-    { path: '**', redirectTo:'dashboard' }
+    {path: 'register', component: RegisterComponent},
+    {path: 'login', component: SignInComponent},
+    {
+        path: '',
+        canActivate: [authGuard],
+        children: [
+            {path: 'dashboard',  component: DashboardComponent},
+            {path: 'game/:gameId', loadComponent: () => import('./game/game.component').then(m => m.GameComponent) },
+        ]
+    },
+    { path: '**', redirectTo:'dashboard', pathMatch: 'full' }
 ];

@@ -16,9 +16,6 @@ export class GameListComponent implements OnInit, OnDestroy {
 
   games: Game[] = [];
 
-  currentGame?: Game;
-  playerName?: string;
-
   subscription?: Subscription;
 
   constructor(private gameService: GameService,
@@ -45,10 +42,9 @@ export class GameListComponent implements OnInit, OnDestroy {
     });
   }
 
-  joinGame() {
-    if(!this.currentGame || !this.playerName) return;
-    this.gameService.joinGame(this.currentGame.id).subscribe(res => {
-      this.router.navigate(["game", res.id]);
+  joinGame(gameId: number) {
+    this.gameService.joinGame(gameId).subscribe(res => {
+      this.router.navigate(["game", gameId]);
     });
   }
 

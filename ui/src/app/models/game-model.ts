@@ -5,7 +5,7 @@ export interface Game {
     id: number,
     name: string,
     rule: Rule,
-    players?: {id:number, name:string}[],
+    players?: {id:number, username:string}[],
     frames: Scoreboard;
 
 }

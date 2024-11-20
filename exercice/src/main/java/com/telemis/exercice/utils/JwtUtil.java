@@ -16,9 +16,8 @@ import javax.crypto.SecretKey;
 @Component
 public class JwtUtil {
 
-    private final long EXPIRATION_TIME = 900_000; // 15 minutes
-
-    private SecretKey key = Jwts.SIG.HS256.key().build();
+    private static final long EXPIRATION_TIME = 3_600_000; // 1 hour
+    private static SecretKey key = Jwts.SIG.HS256.key().build();
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -60,6 +59,4 @@ public class JwtUtil {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
-
-    // Additional utility methods...
 }

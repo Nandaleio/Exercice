@@ -7,6 +7,15 @@
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+
+    * {
+        border: 1px solid var(--pico-primary-background);
+    }
+
+    .frame-number{
+        background-color: var(--pico-color-yellow-50);
+        text-align: center;
+    }
 }
 
 .rolls {

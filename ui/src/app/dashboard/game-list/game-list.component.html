@@ -15,23 +15,7 @@
             <li>Rule: {{g.rule.name}}</li>
         </ul>
         <footer class="center-footer">
-            <button (click)="currentGame = g; joinGameDialog.open = true">Join</button>
+            <button (click)="joinGame(g.id)">Join</button>
         </footer>
     </article>
 }
-
-<dialog #joinGameDialog>
-    <article>
-        <header>
-          <button aria-label="Close" rel="prev" (click)="currentGame = undefined; joinGameDialog.close()"></button>
-          <p>
-            <strong>Join {{currentGame?.name}}</strong>
-          </p>
-        </header>
-        <input type="text" name="Name" placeholder="Player Name" (input)="playerName = $any($event.target).value">
-        <footer>
-            <button class="secondary" (click)="currentGame = undefined; joinGameDialog.close()"> Cancel </button>
-            <button (click)="joinGame()">Join</button>
-          </footer>
-      </article>
-</dialog>
