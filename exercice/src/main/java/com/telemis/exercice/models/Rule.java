@@ -22,13 +22,13 @@ public class Rule {
     private int maxRollsPerFrame;
 
     private int strikeBonus;
-    private int strikeAfterPins;
+    private int strikeAfterRolls;
 
     private int spareBonus;
-    private int spareAfterPins;
+    private int spareAfterRolls;
 
 
     public int getMaxExtraRolls() {
-        return Math.max(this.getSpareAfterPins(), this.getStrikeAfterPins()) -1;
+        return Math.max(this.getSpareAfterRolls(), this.getStrikeAfterRolls()) -1;
     }
 }

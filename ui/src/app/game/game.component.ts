@@ -38,11 +38,27 @@ export class GameComponent implements OnInit {
     this.gameService.roll(this.game?.id || -1, -1).subscribe(res => {
       let currentFrame = this.game?.frames.find(f => f.id == res.id);
       if(!currentFrame) {
-        res.totalScore = res.rolls[0];
         this.game?.frames.push(res)
       }
       else {
         currentFrame.rolls = res.rolls;
+        currentFrame.totalScore = res.totalScore;
+      }
+      
+    });
+  }
+
+  rollInput() {
+    const pinsDown = prompt('How many pins ?')!;
+
+    this.gameService.roll(this.game?.id || -1, +pinsDown).subscribe(res => {
+      let currentFrame = this.game?.frames.find(f => f.id == res.id);
+      if(!currentFrame) {
+        this.game?.frames.push(res)
+      }
+      else {
+        currentFrame.rolls = res.rolls;
+        currentFrame.totalScore = res.totalScore;
       }
       
     });

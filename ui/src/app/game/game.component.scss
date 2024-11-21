@@ -10,28 +10,39 @@
     align-items: center;
 }
 
+.roll-buttons {
+    display: flex;
+    justify-content: space-evenly;
+}
+
 .frame {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    
+    border: 1px solid var(--pico-primary-background);
 
     * {
-        border: 1px solid var(--pico-primary-background);
         text-align: center;
     }
 
     .frame-number{
         background-color: var(--pico-color-yellow-50);
         text-align: center;
+        
+        border: 1px solid var(--pico-primary-background);
     }
 }
 
 .rolls {
     display: flex;
-    align-items: flex-end;
     flex-direction: row;
+    align-items: stretch;
 }
 
+.rolls>:not(:first-child).roll {
+    border: 1px solid var(--pico-primary-background);
+}
 .roll{
     flex-grow: 1;
 }

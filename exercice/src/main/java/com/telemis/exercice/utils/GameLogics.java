@@ -53,15 +53,49 @@ public class GameLogics {
 
 
 	public static void updateFrameScore(Frame currentFrame) {
-
-        // Update total score for the game (accumulate from previous frames)
         Game game = currentFrame.getGame();
+        Rule rule = game.getRule();
+        
+        // Get all frames for this player in order
+        List<Frame> playerFrames = game.getFrames().stream()
+            .filter(f -> f.getPlayer().equals(currentFrame.getPlayer()))
+            .sorted((f1, f2) -> Integer.compare(f1.getFrameNumber(), f2.getFrameNumber()))
+            .toList();
 
-         int totalScore = game.getFrames().stream()
-            .filter(g -> g.getPlayer().equals(currentFrame.getPlayer()))
-            .flatMapToInt(g -> g.getRolls().stream().mapToInt(r -> r.intValue())).sum();
+        int runningTotal = 0;
+        
+        for (int i = 0; i < playerFrames.size(); i++) {
+            Frame frame = playerFrames.get(i);
+            int frameScore = frame.getPinsDown();
             
-        currentFrame.setTotalScore(totalScore);
+            // Handle strike bonus
+            if (frame.getRolls().size() > 0 && frame.getRolls().get(0) == rule.getMaxPins()) {
+                if (i < playerFrames.size() - 1) {
+                    Frame nextFrame = playerFrames.get(i + 1);
+                    frameScore += nextFrame.getRolls().stream()
+                        .limit(rule.getStrikeAfterRolls())
+                        .mapToInt(Integer::intValue)
+                        .sum();
+                }
+            }
+            // Handle spare bonus
+            else if (frame.getPinsDown() == rule.getMaxPins()) {
+                if (i < playerFrames.size() - 1) {
+                    Frame nextFrame = playerFrames.get(i + 1);
+                    if (!nextFrame.getRolls().isEmpty()) {
+                        frameScore += nextFrame.getRolls().get(0) * rule.getSpareAfterRolls();
+                    }
+                }
+            }
+            
+            runningTotal += frameScore;
+            
+            if (frame.equals(currentFrame)) {
+                break;
+            }
+        }
+        
+        currentFrame.setTotalScore(runningTotal);
     }
 
 	public int getNextRolls(Rule rule, List<Frame> frames, int index) {

@@ -39,7 +39,7 @@ public class Frame {
             if (this.getFrameNumber() < rule.getMaxFrames()) {
                 return this.getRolls().size() == rule.getMaxRollsPerFrame();
             } else {
-                return this.getRolls().size() == (rule.getMaxRollsPerFrame() + Math.max(rule.getSpareAfterPins(), rule.getStrikeAfterPins()));
+                return this.getRolls().size() == (rule.getMaxRollsPerFrame() + Math.max(rule.getSpareAfterRolls(), rule.getStrikeAfterRolls()));
             }
     }
 
