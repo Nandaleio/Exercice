@@ -3,6 +3,10 @@
         <h1>
             <strong>{{game?.name}}</strong>
         </h1>
+        <span class="separator"></span>
+        <h3>
+            {{game?.rule?.name}}
+        </h3>
     </header>
 
     <div class="scoreboards">
@@ -10,6 +14,7 @@
         <button (click)="roll()">Roll !</button>
 
         @for (player of game?.players; track $index) {
+            <div>
             {{player.username}}:
             <div class="board">
             @for (frame of getPlayerGame(player); track $index) {
@@ -18,14 +23,15 @@
                     <div class="rolls">
                         @for (roll of frame.rolls; track $index) {
                             <div class="roll">
-                                {{roll}}
+                                {{getRoll(frame, roll, $index)}}
                             </div>
                         }
                     </div>
-                    <span>{{frame.totalScore}}</span>
+                    <span>{{ frame.totalScore }}</span>
                 </div>
             }
             </div>
+        </div>
         }
     </div>
 </article>

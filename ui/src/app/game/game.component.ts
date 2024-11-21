@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { switchMap } from 'rxjs';
-import { Game, Player } from '../models/game-model';
+import { Frame, Game, Player } from '../models/game-model';
 import { GameService } from '../services/game-service.service';
 import { AuthService } from '../services/auth.service';
 
@@ -36,9 +35,31 @@ export class GameComponent implements OnInit {
   }
 
   roll(){
-    this.gameService.roll(this.game?.id || -1).subscribe(res => {
-      this.game?.frames.find(f => f.player.id === this.userPayload.id)
-    })
+    this.gameService.roll(this.game?.id || -1, -1).subscribe(res => {
+      let currentFrame = this.game?.frames.find(f => f.id == res.id);
+      if(!currentFrame) {
+        res.totalScore = res.rolls[0];
+        this.game?.frames.push(res)
+      }
+      else {
+        currentFrame.rolls = res.rolls;
+      }
+      
+    });
+  }
+
+  
+  getRollSum(frame: Frame) {
+    return frame.rolls.reduce((partialSum, a) => partialSum + a, 0)
+  }
+  
+  getRoll(frame: Frame, roll: number, index: number): number|string {
+    if(index === 0 && roll === this.game?.rule.maxPins) return 'X';
+    const previousPins = frame.rolls.filter((v,i) => i<=index).reduce((totale,v) => totale+=v, 0)
+    if(index !== 0 &&  previousPins === this.game?.rule.maxPins) {
+      return (roll === 0) ? '' : '/';
+    }
+    return roll;
   }
 
 }

@@ -2,6 +2,8 @@ package com.telemis.exercice.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +24,8 @@ import jakarta.transaction.Transactional;
 @Service
 @Transactional
 public class GameService {
+    
+    private Random rand = new Random();
 
     @Autowired
     GameRepository gameRepo;
@@ -33,34 +37,30 @@ public class GameService {
     FrameRepository frameRepo;
     
 	@Autowired
-    private UserRepository userRepository;
-
-    public Game newGame(Long gameRuleId, String gameName) {
-        Rule rule = this.ruleRepo.findById(gameRuleId).orElseThrow();
-        Game game = new Game();
-        game.setRule(rule);
-        game.setName(gameName);
-        return this.gameRepo.save(game);
-    }
-
+    UserRepository userRepository;
     
     /*** donne le résultat du lancer suivant pour ce joueur
     *   @param quilles donne le nombre de quilles abattues par ce lancer 
     ***/
-    public Game lancer(Long gameId, int pins) {
+    public Frame lancer(Long gameId, int pins) {
+
         Game game = this.gameRepo.findById(gameId).orElseThrow();
 
-        Rule rule = game.getRule();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserPlayer currentUser = this.userRepository.findByUsername(auth.getName()).orElseThrow();
 
-        if(!game.getPlayers().contains(currentUser)) throw new IllegalStateException("Player not in the game");
+        Rule rule = game.getRule();
+        
+        if(!game.getPlayers().contains(currentUser)) throw new IllegalStateException("Player is not in this game");
 
         // get last frame
         Frame currentFrame = game.getPlayerCurrentFrame(currentUser);
-        if (currentFrame == null) {
-            throw new IllegalStateException("No current frame found or game is complete.");
-        }
+        if(currentFrame == null) currentFrame = this.createNextFrame(currentUser, game);
+
+        // Random pins down if no pins has been add to the request
+        int pinsDown = currentFrame.getPinsDown();
+        if(pins < 0) pins = rand.nextInt((rule.getMaxPins() - pinsDown) + 1);
+
 
         if (currentFrame.getFrameNumber() == rule.getMaxFrames()) {
             GameLogics.handleFinalFrameRoll(rule, currentFrame, pins);
@@ -68,26 +68,28 @@ public class GameService {
             GameLogics.handleRegularFrameRoll(rule, currentFrame, pins);
         }
 
-        // Update frame score
         GameLogics.updateFrameScore(currentFrame);
 
         // Return updated frame
-        this.frameRepo.save(currentFrame);
-
-        return game;
+        return this.frameRepo.save(currentFrame);
     }
 
-    public Iterable<Rule> getRules() {
-        return this.ruleRepo.findAll();
-    }
+    private Frame createNextFrame(UserPlayer player, Game game) {
+        int currentFrameNumber = Math.toIntExact(game.getFrames().stream().filter(v -> v.getPlayer().equals(player)).count())+1;
 
-    public Iterable<Game> getGames() {
-        return this.gameRepo.findAll();
+        if (currentFrameNumber > game.getRule().getMaxFrames()) {
+            throw new IllegalArgumentException("No more frames allowed in the game.");
+        }
+    
+        Frame frame = new Frame();
+        frame.setFrameNumber(currentFrameNumber);
+        frame.setGame(game);
+        frame.setPlayer(player);
+        frame.setRolls(new ArrayList<Integer>());
+    
+        return this.frameRepo.save(frame);
     }
-
-    public Game getGame(Long gameId) {
-        return this.gameRepo.findById(gameId).orElseThrow();
-    }
+    
 
     public Game addPlayer(Long gameId) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -106,9 +108,26 @@ public class GameService {
         return this.gameRepo.save(game);
     }
 
+    public Game newGame(Long gameRuleId, String gameName) {
+        Rule rule = this.ruleRepo.findById(gameRuleId).orElseThrow();
+        Game game = new Game();
+        game.setRule(rule);
+        game.setName(gameName);
+        return this.gameRepo.save(game);
+    }
 
     public void deleteGame(Long gameId) {
         this.gameRepo.deleteById(gameId);
     }
-    
+    public Iterable<Rule> getRules() {
+        return this.ruleRepo.findAll();
+    }
+
+    public Iterable<Game> getGames() {
+        return this.gameRepo.findAll();
+    }
+
+    public Game getGame(Long gameId) {
+        return this.gameRepo.findById(gameId).orElseThrow();
+    }
 }

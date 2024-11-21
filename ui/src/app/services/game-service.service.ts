@@ -44,8 +44,8 @@ export class GameService {
     return this.http.get<Game>(`${environment.apiURL}/join?gameId=${gameId}`);
   }
 
-  roll(gameId: number) {
-    return this.http.get<Frame[]>(`${environment.apiURL}/roll?gameId=${gameId}`);
+  roll(gameId: number, pins: number) {
+    return this.http.get<Frame>(`${environment.apiURL}/roll?gameId=${gameId}&pins=${pins}`);
   }
 
   // WS :

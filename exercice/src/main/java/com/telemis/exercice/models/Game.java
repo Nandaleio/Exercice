@@ -41,6 +41,7 @@ public class Game {
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Frame> frames;
 
+
     public Frame getPlayerCurrentFrame(UserPlayer player) {
         if(this.getFrames() == null) return null;
 

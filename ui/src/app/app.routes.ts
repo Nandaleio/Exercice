@@ -13,7 +13,8 @@ export const routes: Routes = [
         children: [
             {path: 'dashboard',  component: DashboardComponent},
             {path: 'game/:gameId', loadComponent: () => import('./game/game.component').then(m => m.GameComponent) },
+            
+            { path: '**', redirectTo:'dashboard', pathMatch: 'full' }
         ]
     },
-    { path: '**', redirectTo:'dashboard', pathMatch: 'full' }
 ];

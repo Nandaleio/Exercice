@@ -26,4 +26,9 @@ public class Rule {
 
     private int spareBonus;
     private int spareAfterPins;
+
+
+    public int getMaxExtraRolls() {
+        return Math.max(this.getSpareAfterPins(), this.getStrikeAfterPins()) -1;
+    }
 }

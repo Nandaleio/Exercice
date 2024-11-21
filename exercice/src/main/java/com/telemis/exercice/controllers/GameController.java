@@ -3,9 +3,9 @@ package com.telemis.exercice.controllers;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.telemis.exercice.models.Frame;
 import com.telemis.exercice.models.Game;
 import com.telemis.exercice.models.Rule;
-import com.telemis.exercice.services.FrameService;
 import com.telemis.exercice.services.GameService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +22,6 @@ public class GameController {
 
     @Autowired
     GameService gameService;
-
-    @Autowired
-    FrameService frameService;
 
     @GetMapping("/rules")
     public Iterable<Rule> getAllRules() {
@@ -60,10 +57,8 @@ public class GameController {
     }
 
     @GetMapping("/roll")
-    public Game postMethodName(@RequestParam Long gameId) {
-        //TODO change the 1 to be either a random number or a more elaborate 1
-        this.gameService.lancer(gameId, 1);
-        return null;
+    public Frame postMethodName(@RequestParam Long gameId, @RequestParam int pins) {
+        return this.gameService.lancer(gameId, pins);
     }
 
 
