@@ -14,7 +14,6 @@ import { AuthService } from '../services/auth.service';
 export class GameComponent implements OnInit {
   
   game?: Game | null;
-  userPayload: any;
 
   constructor(private route: ActivatedRoute,
               private gameService: GameService,
@@ -25,8 +24,7 @@ export class GameComponent implements OnInit {
     const currentGameId = this.route.snapshot.paramMap.get('gameId') || "";
     this.gameService.getGame(currentGameId).subscribe(res => {
       this.game = res;
-    })
-    this.userPayload = this.authService.getPayload();
+    });
 
   }
 
@@ -36,44 +34,27 @@ export class GameComponent implements OnInit {
 
   roll(){
     this.gameService.roll(this.game?.id || -1, -1).subscribe(res => {
-      let currentFrame = this.game?.frames.find(f => f.id == res.id);
-      if(!currentFrame) {
-        this.game?.frames.push(res)
-      }
-      else {
-        currentFrame.rolls = res.rolls;
-        currentFrame.totalScore = res.totalScore;
-      }
-      
+      this.game = res;
     });
   }
 
-  rollInput() {
-    const pinsDown = prompt('How many pins ?')!;
+  rollInput(pins?: number) {
+    if(!pins) pins = +prompt('How many pins ?')!;
 
-    this.gameService.roll(this.game?.id || -1, +pinsDown).subscribe(res => {
-      let currentFrame = this.game?.frames.find(f => f.id == res.id);
-      if(!currentFrame) {
-        this.game?.frames.push(res)
-      }
-      else {
-        currentFrame.rolls = res.rolls;
-        currentFrame.totalScore = res.totalScore;
-      }
-      
+    this.gameService.roll(this.game?.id || -1, pins).subscribe(res => {
+      this.game = res;
     });
   }
-
   
   getRollSum(frame: Frame) {
     return frame.rolls.reduce((partialSum, a) => partialSum + a, 0)
   }
   
-  getRoll(frame: Frame, roll: number, index: number): number|string {
+  getRoll(frame: Frame, roll: number | null, index: number): number|string|null {
     if(index === 0 && roll === this.game?.rule.maxPins) return 'X';
     const previousPins = frame.rolls.filter((v,i) => i<=index).reduce((totale,v) => totale+=v, 0)
     if(index !== 0 &&  previousPins === this.game?.rule.maxPins) {
-      return (roll === 0) ? '' : '/';
+      return (roll === null) ? '' : '/';
     }
     return roll;
   }

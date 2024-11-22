@@ -2,6 +2,8 @@ package com.telemis.exercice.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +18,9 @@ import javax.crypto.SecretKey;
 public class JwtUtil {
 
     private static final long EXPIRATION_TIME = 3_600_000; // 1 hour
-    private static SecretKey key = Jwts.SIG.HS256.key().build();
+
+    private SecretKey key = Keys.hmacShaKeyFor("very_long_secret_for_exemple_pls_dont_use".getBytes());
+    //private static SecretKey key = Jwts.SIG.HS256.key().build(); // this should be used instead
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);

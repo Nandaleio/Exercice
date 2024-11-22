@@ -45,7 +45,7 @@ export class GameService {
   }
 
   roll(gameId: number, pins: number) {
-    return this.http.get<Frame>(`${environment.apiURL}/roll?gameId=${gameId}&pins=${pins}`);
+    return this.http.get<Game>(`${environment.apiURL}/roll?gameId=${gameId}&pins=${pins}`);
   }
 
   // WS :

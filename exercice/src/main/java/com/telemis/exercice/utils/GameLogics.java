@@ -1,17 +1,21 @@
 package com.telemis.exercice.utils;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
+import com.telemis.exercice.exceptions.NoMoreRollAllowedException;
 import com.telemis.exercice.models.Frame;
 import com.telemis.exercice.models.Game;
 import com.telemis.exercice.models.Rule;
+import com.telemis.exercice.models.UserPlayer;
 
 public class GameLogics {
 
 	public static void handleRegularFrameRoll(Rule rule, Frame currentFrame, int pins) {
         
         if(currentFrame.getRolls().size() > rule.getMaxRollsPerFrame()) {
-            throw new IllegalStateException("No more rolls allowed in this frame.");
+            throw new NoMoreRollAllowedException();
         }
 
         currentFrame.getRolls().add(pins);
@@ -22,80 +26,74 @@ public class GameLogics {
             currentFrame.getPinsDown() == rule.getMaxPins() //Spare
         ) {
                 for(int i = currentFrame.getRolls().size(); i < rule.getMaxRollsPerFrame() ; i++) {
-                    currentFrame.getRolls().add(-0);
+                    currentFrame.getRolls().add(null);
                 }
         }
     }
 
     public static void handleFinalFrameRoll(Rule rule, Frame currentFrame, int pins) {
-        if(currentFrame.getRolls().size() > rule.getMaxRollsPerFrame() + rule.getMaxExtraRolls()) {
-            throw new IllegalStateException("No more rolls allowed in the final frame.");
-        }
-        
-        currentFrame.getRolls().add(pins);
-        
-        if(currentFrame.getRolls().get(0) == rule.getMaxPins()) { //Strike so allow up to rule.getMaxRollsPerFrame() + 1
-            
-            if(currentFrame.getRolls().size() >= rule.getMaxRollsPerFrame() + 1) {
-                throw new IllegalStateException("No more rolls allowed in the final frame.");
+        if(currentFrame.getRolls().size() > 0 && currentFrame.getRolls().get(0) == rule.getMaxPins()){
+            if(currentFrame.getRolls().size() > (rule.getMaxRollsPerFrame() + rule.getStrikeAfterRolls())) {
+                throw new NoMoreRollAllowedException();
             }
-
         }
-        
-        int finalScore = currentFrame.getRolls().stream().mapToInt(i -> i.intValue()).sum();
-        boolean allPinsDown = rule.getMaxPins() == finalScore;
-
-
-        if(allPinsDown && currentFrame.getRolls().size() >= rule.getMaxRollsPerFrame() + 2) {
-            currentFrame.getRolls().add(pins);
+        else if(currentFrame.getPinsDown() == rule.getMaxPins()) {
+            if(currentFrame.getRolls().size() > (rule.getMaxRollsPerFrame() + rule.getSpareAfterRolls())) {
+                throw new NoMoreRollAllowedException();
+            }
         }
+        currentFrame.getRolls().add(pins);
     }
 
 
-	public static void updateFrameScore(Frame currentFrame) {
-        Game game = currentFrame.getGame();
+	public static void updateGameScoreForPlayer(Game game, UserPlayer player) {
         Rule rule = game.getRule();
         
         // Get all frames for this player in order
         List<Frame> playerFrames = game.getFrames().stream()
-            .filter(f -> f.getPlayer().equals(currentFrame.getPlayer()))
-            .sorted((f1, f2) -> Integer.compare(f1.getFrameNumber(), f2.getFrameNumber()))
+            .filter(f -> f.getPlayer().equals(player))
+            .sorted((f1, f2) -> Integer.compare(f2.getFrameNumber(),f1.getFrameNumber())) // reversed array !!!
             .toList();
 
-        int runningTotal = 0;
-        
-        for (int i = 0; i < playerFrames.size(); i++) {
-            Frame frame = playerFrames.get(i);
-            int frameScore = frame.getPinsDown();
-            
-            // Handle strike bonus
-            if (frame.getRolls().size() > 0 && frame.getRolls().get(0) == rule.getMaxPins()) {
-                if (i < playerFrames.size() - 1) {
-                    Frame nextFrame = playerFrames.get(i + 1);
-                    frameScore += nextFrame.getRolls().stream()
-                        .limit(rule.getStrikeAfterRolls())
-                        .mapToInt(Integer::intValue)
-                        .sum();
+        Queue<Integer> extraRolls = new LinkedList<>();
+
+        for (int frameIndex = 0; frameIndex < playerFrames.size(); frameIndex++) {
+            Frame frame = playerFrames.get(frameIndex);
+            int frameScore = 0;
+            boolean spareCheck = false;
+
+            for(int rollIndex = frame.getRolls().size()-1; rollIndex >= 0 ; rollIndex--) { // reversed rolls !!!
+                Integer roll = frame.getRolls().get(rollIndex);
+
+                if(roll == null) continue;
+
+                // Handle strike
+                if (roll == rule.getMaxPins() && rollIndex == 0 && extraRolls.size() >= rule.getStrikeAfterRolls()) {
+                    frameScore += extraRolls.stream().limit(rule.getStrikeAfterRolls()).mapToInt(r -> r.intValue()).sum();
+                    frameScore += rule.getStrikeBonus();
                 }
-            }
-            // Handle spare bonus
-            else if (frame.getPinsDown() == rule.getMaxPins()) {
-                if (i < playerFrames.size() - 1) {
-                    Frame nextFrame = playerFrames.get(i + 1);
-                    if (!nextFrame.getRolls().isEmpty()) {
-                        frameScore += nextFrame.getRolls().get(0) * rule.getSpareAfterRolls();
-                    }
+                // Handle spare
+                else if (frame.getPinsDown() == rule.getMaxPins() && extraRolls.size() >= rule.getSpareAfterRolls() && !spareCheck) {
+                    frameScore += extraRolls.stream().limit(rule.getSpareAfterRolls()).mapToInt(r -> r.intValue()).sum();
+                    frameScore += rule.getSpareBonus();
+                    spareCheck = true;
                 }
+                else if(!spareCheck) {
+                    frameScore += roll;
+                }
+                
+                extraRolls.add(roll);
+                if(extraRolls.size() > rule.getMaxExtraRolls()) extraRolls.poll();
             }
-            
-            runningTotal += frameScore;
-            
-            if (frame.equals(currentFrame)) {
-                break;
-            }
+            frame.setTotalScore(frameScore);
         }
-        
-        currentFrame.setTotalScore(runningTotal);
+
+        int previousScore = 0;
+        for (int frameIndex = playerFrames.size()-1; frameIndex >= 0 ; frameIndex--) {
+            Frame frame = playerFrames.get(frameIndex);
+            previousScore += frame.getTotalScore();
+            frame.setTotalScore(previousScore);
+        }
     }
 
 	public int getNextRolls(Rule rule, List<Frame> frames, int index) {

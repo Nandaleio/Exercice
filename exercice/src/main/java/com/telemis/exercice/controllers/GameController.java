@@ -3,7 +3,6 @@ package com.telemis.exercice.controllers;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.telemis.exercice.models.Frame;
 import com.telemis.exercice.models.Game;
 import com.telemis.exercice.models.Rule;
 import com.telemis.exercice.services.GameService;
@@ -57,7 +56,7 @@ public class GameController {
     }
 
     @GetMapping("/roll")
-    public Frame postMethodName(@RequestParam Long gameId, @RequestParam int pins) {
+    public Game postMethodName(@RequestParam Long gameId, @RequestParam int pins)  {
         return this.gameService.lancer(gameId, pins);
     }
 

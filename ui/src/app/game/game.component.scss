@@ -55,3 +55,14 @@
 .separator {
     flex-grow: 1;
 }
+
+
+.large-article {
+    max-width: 100%;
+}
+
+.rolls-input {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}

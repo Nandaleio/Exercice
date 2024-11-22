@@ -29,6 +29,6 @@ public class Rule {
 
 
     public int getMaxExtraRolls() {
-        return Math.max(this.getSpareAfterRolls(), this.getStrikeAfterRolls()) -1;
+        return Math.max(this.getSpareAfterRolls(), this.getStrikeAfterRolls());
     }
 }

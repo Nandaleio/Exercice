@@ -35,15 +35,7 @@ public class Frame {
     @JoinColumn(name = "game_id", nullable = false)
     private Game game;
 
-    public boolean isComplete(Rule rule) {
-            if (this.getFrameNumber() < rule.getMaxFrames()) {
-                return this.getRolls().size() == rule.getMaxRollsPerFrame();
-            } else {
-                return this.getRolls().size() == (rule.getMaxRollsPerFrame() + Math.max(rule.getSpareAfterRolls(), rule.getStrikeAfterRolls()));
-            }
-    }
-
     public int getPinsDown() {
-        return this.getRolls().stream().mapToInt(r -> r.intValue()).sum();
+        return this.getRolls().stream().filter(v -> v != null).mapToInt(r -> r.intValue()).sum();
     }
 }

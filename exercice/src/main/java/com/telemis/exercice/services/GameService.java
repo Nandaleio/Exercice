@@ -9,6 +9,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.telemis.exercice.exceptions.NoMoreFrameAllowedException;
+import com.telemis.exercice.exceptions.NoPlayerInGameException;
 import com.telemis.exercice.models.Frame;
 import com.telemis.exercice.models.Game;
 import com.telemis.exercice.models.Rule;
@@ -36,13 +38,13 @@ public class GameService {
     @Autowired
     FrameRepository frameRepo;
     
-	@Autowired
+    @Autowired
     UserRepository userRepository;
     
     /*** donne le résultat du lancer suivant pour ce joueur
     *   @param quilles donne le nombre de quilles abattues par ce lancer 
-    ***/
-    public Frame lancer(Long gameId, int pins) {
+        ***/
+        public Game lancer(Long gameId, int pins) {
 
         Game game = this.gameRepo.findById(gameId).orElseThrow();
 
@@ -51,11 +53,14 @@ public class GameService {
 
         Rule rule = game.getRule();
         
-        if(!game.getPlayers().contains(currentUser)) throw new IllegalStateException("Player is not in this game");
+        if(!game.getPlayers().contains(currentUser)) throw new NoPlayerInGameException();
 
         // get last frame
         Frame currentFrame = game.getPlayerCurrentFrame(currentUser);
-        if(currentFrame == null) currentFrame = this.createNextFrame(currentUser, game);
+        if(currentFrame == null) {
+            currentFrame = this.createNextFrame(currentUser, game);
+            game.getFrames().add(currentFrame);
+        }
 
         // Random pins down if no pins has been add to the request
         int pinsDown = currentFrame.getPinsDown();
@@ -68,17 +73,16 @@ public class GameService {
             GameLogics.handleRegularFrameRoll(rule, currentFrame, pins);
         }
 
-        GameLogics.updateFrameScore(currentFrame);
+        GameLogics.updateGameScoreForPlayer(game, currentUser);
 
-        // Return updated frame
-        return this.frameRepo.save(currentFrame);
+        return this.gameRepo.save(game);
     }
 
     private Frame createNextFrame(UserPlayer player, Game game) {
         int currentFrameNumber = Math.toIntExact(game.getFrames().stream().filter(v -> v.getPlayer().equals(player)).count())+1;
 
         if (currentFrameNumber > game.getRule().getMaxFrames()) {
-            throw new IllegalArgumentException("No more frames allowed in the game.");
+            throw new NoMoreFrameAllowedException();
         }
     
         Frame frame = new Frame();

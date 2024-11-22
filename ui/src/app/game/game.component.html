@@ -12,9 +12,8 @@
     <div class="scoreboards">
         <div class="roll-buttons">
             <button (click)="roll()">Roll Random</button>
-            <button (click)="rollInput()">Roll Input</button>
+            <button (click)="rollInputDialog.open = true;">Roll Input</button>
         </div>
-
 
 
         @for (player of game?.players; track $index) {
@@ -39,3 +38,20 @@
         }
     </div>
 </article>
+
+<dialog #rollInputDialog>
+    <article class="large-article">
+        <header>
+          <button aria-label="Close" rel="prev" (click)="rollInputDialog.close()"></button>
+          <p>
+            <strong>Roll Input</strong>
+          </p>
+        </header>
+        <div class="rolls-input">
+            @for (item of [].constructor(game?.rule?.maxPins); track $index) {
+                <button (click)="rollInput($index+1); rollInputDialog.close()">{{$index+1}}</button>
+            }
+        </div>
+
+      </article>
+</dialog>
