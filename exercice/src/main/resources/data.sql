@@ -7,9 +7,9 @@ INSERT INTO USER_PLAYER (id, username, password) VALUES (-2, 'test2', '$2a$12$/p
 INSERT INTO USER_PLAYER (id, username, password) VALUES (-3, 'test3', '$2a$12$JwEEhFBCaL0DPFwqPGWn1.4pwcH.PmJ6sB4A2PwqbpcVCcDiPIVTa'); -- password: test3
 
 
-INSERT INTO GAME (id, name, rule_id) VALUES (-1, 'Classic', 1);
+INSERT INTO GAME (id, name, rule_id) VALUES (-1, 'Classic rules', 1);
 INSERT INTO GAME (id, name, rule_id) VALUES (-2, 'Problem in the example', 2);
-INSERT INTO GAME (id, name, rule_id) VALUES (-3, 'Ancient', 2);
+INSERT INTO GAME (id, name, rule_id) VALUES (-3, 'Example OK', 2);
 
 INSERT INTO GAME_PLAYERS (GAME_ID, PLAYER_ID) VALUES (-2, -2);
 INSERT INTO GAME_PLAYERS (GAME_ID, PLAYER_ID) VALUES (-3, -3);

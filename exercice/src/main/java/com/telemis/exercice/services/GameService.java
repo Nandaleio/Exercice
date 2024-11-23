@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.telemis.exercice.exceptions.GameNotFoundException;
 import com.telemis.exercice.exceptions.NoMoreFrameAllowedException;
 import com.telemis.exercice.exceptions.NoPlayerInGameException;
 import com.telemis.exercice.models.Frame;
@@ -46,7 +47,7 @@ public class GameService {
         ***/
         public Game lancer(Long gameId, int pins) {
 
-        Game game = this.gameRepo.findById(gameId).orElseThrow();
+        Game game = this.gameRepo.findById(gameId).orElseThrow(() -> new GameNotFoundException());
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserPlayer currentUser = this.userRepository.findByUsername(auth.getName()).orElseThrow();
@@ -62,10 +63,11 @@ public class GameService {
             game.getFrames().add(currentFrame);
         }
 
-        // Random pins down if no pins has been add to the request
-        int pinsDown = currentFrame.getPinsDown();
-        if(pins < 0) pins = rand.nextInt((rule.getMaxPins() - pinsDown) + 1);
-
+        // Random pins down if no pins have been added to the request
+        if(pins < 0) {
+            int pinsDown = currentFrame.getPinsDown();
+            pins = rand.nextInt((rule.getMaxPins() - pinsDown) + 1);
+        }
 
         if (currentFrame.getFrameNumber() == rule.getMaxFrames()) {
             GameLogics.handleFinalFrameRoll(rule, currentFrame, pins);

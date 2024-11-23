@@ -31,6 +31,7 @@
         text-align: center;
         
         border: 1px solid var(--pico-primary-background);
+        background-color: var(--pico-mark-background-color);
     }
 }
 
@@ -45,6 +46,11 @@
 }
 .roll{
     flex-grow: 1;
+}
+
+.frame:last-child .total-score {
+    background-color: var(--pico-primary-background);
+
 }
 
 .delete-header{

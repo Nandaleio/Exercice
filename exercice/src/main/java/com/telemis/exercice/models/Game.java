@@ -51,7 +51,7 @@ public class Game {
                 .collect(Collectors.toList());
 
         for (Frame frame : frames) {
-            if(frame.getRolls().size() < this.getRule().getMaxRollsPerFrame()) {
+            if(frame.getRolls().size() < this.getRule().getMaxRollsPerFrame() || frame.getFrameNumber() == this.getRule().getMaxFrames()) {
                 return frame;
             }
         }
