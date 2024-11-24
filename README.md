@@ -8,7 +8,7 @@ These two projects are not connected to each other.\
 They will then communicate using HTTP REST API.
 
 ### How to play
- 1. Connecte to the front using your credentials (you can also sign in using the defult user:test pwd:test).
+ 1. Connecte to the front using your credentials (you can also sign in using the default user:test pwd:test).
  2. Either Create (by setting a name and choosing the rules) or Join a Game.
  3. Roll (random or input) pins to refresh the score
 
